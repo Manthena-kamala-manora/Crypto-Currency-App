@@ -23,14 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
-import com.example.cryptocurrencytrackerap.api.RetrofitInstance
 import com.example.cryptocurrencytrackerap.repository.CryptoRepository
 import com.example.cryptocurrencytrackerap.viewmodel.CryptoViewModel
 import com.example.cryptocurrencytrackerap.viewmodel.CryptoViewModelFactory
 
 @Composable
 fun CryptoDetailScreen(cryptoId: String) {
-    val repository = remember { CryptoRepository(RetrofitInstance.api) }
+    val repository = remember { CryptoRepository() }
 
     val viewModel: CryptoViewModel  = viewModel(
         factory = CryptoViewModelFactory(repository)
