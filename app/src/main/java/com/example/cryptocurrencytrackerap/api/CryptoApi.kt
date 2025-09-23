@@ -1,7 +1,9 @@
 package com.example.cryptocurrencytrackerap.api
 
 import com.example.cryptocurrencytrackerap.api.model.Crypto
+import com.example.cryptocurrencytrackerap.api.model.CryptoDetail
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -14,4 +16,11 @@ interface CryptoApi {
         @Query("page") page: Int = 1,
         @Query("sparkline") sparkline: Boolean = false
     ): List<Crypto>
+
+        @GET("coins/{id}")
+        suspend fun getCryptoDetails(
+            @Path("id") id: String,
+            @Query("localization") localization: Boolean = false
+        ): CryptoDetail
+
 }

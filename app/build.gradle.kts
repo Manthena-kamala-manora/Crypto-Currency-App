@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -61,31 +62,23 @@ dependencies {
 
     // ViewModel and LiveData
     implementation (libs.androidx.lifecycle.viewmodel.ktx)
-
-
     // Retrofit with Moshi Converter
-   implementation (libs.retrofit)
-   implementation (libs.retrofit.converter.moshi)
-   implementation (libs.retrofit.converter.scalar)
+    implementation (libs.retrofit)
+    implementation (libs.retrofit.converter.moshi)
+    implementation (libs.retrofit.converter.scalar)
     implementation (libs.okhttp3.logging.interceptor)
     implementation(libs.retrofit.gson)
-
     // Coil
     implementation(libs.coil.compose)
-
     // Coroutines
     implementation(libs.coroutines.core)
     implementation(libs.coroutines.android)
-
     // Accompanist
     implementation(libs.accompanist.swiperefresh)
-
     // Navigation
     implementation(libs.navigation.compose)
-
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.gson)
-
 }

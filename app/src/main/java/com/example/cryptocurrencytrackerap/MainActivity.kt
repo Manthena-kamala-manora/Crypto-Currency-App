@@ -5,33 +5,43 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberImagePainter
+import com.example.cryptocurrencytrackerap.api.RetrofitInstance
 import com.example.cryptocurrencytrackerap.api.model.Crypto
 import com.example.cryptocurrencytrackerap.repository.CryptoRepository
 import com.example.cryptocurrencytrackerap.viewmodel.CryptoViewModel
@@ -42,11 +52,16 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.gson.gson
 
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+
         setContent {
-            CryptoListScreen()
+            MainNavHost(
+            )
         }
     }
 }
@@ -69,16 +84,15 @@ fun CryptoToolbar() {
 
 
 @Composable
-fun CryptoListScreen() {
-    val client = remember {
-        HttpClient(CIO) {
-            install(ContentNegotiation) {
-                gson()
-            }
-        }
-    }
-    val repository = remember { CryptoRepository(client) }
-    val viewModel: CryptoViewModel = viewModel(factory = CryptoViewModelFactory(repository))
+fun CryptoListScreen(
+    onItemClick: (String) -> Unit) {
+
+    val repository = remember { CryptoRepository(RetrofitInstance.api) }
+
+    val viewModel: CryptoViewModel  = viewModel(
+        factory = CryptoViewModelFactory(repository)
+    )
+
     val cryptoList by viewModel.cryptoList.collectAsState()
 
     Scaffold(
@@ -86,7 +100,7 @@ fun CryptoListScreen() {
     ) { padding ->
         LazyColumn(contentPadding = padding) {
             items(cryptoList) { crypto ->
-                CryptoListItem(crypto)
+                CryptoListItem(crypto, onClick = { onItemClick(crypto.id) })
             }
         }
     }
@@ -95,10 +109,11 @@ fun CryptoListScreen() {
 
 
 @Composable
-fun CryptoListItem(crypto: Crypto) {
+fun CryptoListItem(crypto: Crypto, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onClick() }
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -126,6 +141,31 @@ fun CryptoListItem(crypto: Crypto) {
     }
 }
 
+@Composable
+fun MainNavHost() {
+    val navController = rememberNavController()
+    NavHost(navController, startDestination = "list") {
+        composable("list") {
+            CryptoListScreen(
+                onItemClick = { cryptoId ->
+                    navController.navigate("detail/$cryptoId")
+                }
+            )
+        }
+        composable("detail/{cryptoId}") { backStackEntry ->
+            val cryptoId = backStackEntry.arguments?.getString("cryptoId")
+            cryptoId?.let {
+                CryptoDetailScreen(cryptoId)
+            }
+        }
+    }
+}
+
+
+
+
+
+
 @Preview(showBackground = true)
 @Composable
 fun CryptoListPreview() {
@@ -141,7 +181,7 @@ fun CryptoListPreview() {
     )
     LazyColumn {
         items(mockData) { crypto ->
-            CryptoListItem(crypto)
+            CryptoListItem(crypto,onClick = { "bitcoin"})
         }
     }
 }
