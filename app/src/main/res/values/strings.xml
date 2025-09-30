@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Cryptocurrency Tracker</string>
+    <string name="usd">usd</string>
+    <string name="market_cap">"Market Cap: "</string>
+    <string name="volume">24h Volume:</string>
+    <string name="price_change">Price Change (24h):</string>
+    <string name="price">Price:</string>
+    <string name="text_back_button">Back</string>
 </resources>
