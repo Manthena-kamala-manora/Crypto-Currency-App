@@ -1,4 +1,4 @@
-package com.example.cryptocurrencytrackerap
+package com.example.cryptocurrencytrackerap.ui.composables
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -20,9 +20,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
+import com.example.cryptocurrencytrackerap.R
 import com.example.cryptocurrencytrackerap.repository.CryptoRepository
 import com.example.cryptocurrencytrackerap.viewmodel.CryptoViewModel
 import com.example.cryptocurrencytrackerap.viewmodel.CryptoViewModelFactory
@@ -49,16 +54,13 @@ fun CryptoDetailScreen(cryptoId: String) {
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = rememberImagePainter(data = detail.image.large),
-                contentDescription = "${detail.name} logo",
-                modifier = Modifier.size(80.dp)
-            )
+            CryptoImg(detail.image.large,detail.name)
+
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = detail.name, style = MaterialTheme.typography.headlineMedium)
-            Text(text = "Market Cap: \$${detail.market_data.market_cap["usd"]}")
-            Text(text = "24h Volume: \$${detail.market_data.total_volume["usd"]}")
-            Text(text = "Price Change (24h): ${detail.market_data.price_change_percentage_24h}%")
+            Text(text = stringResource(id = R.string.market_cap) + " \$${detail.market_data.market_cap[stringResource(id = R.string.usd)]}")
+            Text(text =stringResource(id = R.string.volume) + " \$${detail.market_data.total_volume[stringResource(id = R.string.usd)]}")
+            Text(text = stringResource(id = R.string.price_change) + " ${detail.market_data.price_change_percentage_24h}%")
             Spacer(modifier = Modifier.height(16.dp))
 
             val scrollState = rememberScrollState()
@@ -77,4 +79,18 @@ fun CryptoDetailScreen(cryptoId: String) {
             CircularProgressIndicator()
         }
     }
+}
+
+@Composable
+fun CryptoImg(url: String, name: String) {
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(url)
+            .crossfade(true)
+            .build(),
+        contentDescription = name,
+        modifier = Modifier
+            .size(100.dp)
+            .padding(8.dp)
+    )
 }
